@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ретро Гаджеты 2000-х</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; margin: 0; padding: 20px; }
+        .main-container { display: flex; width: 100%; }
+        .sidebar { width: 200px; padding-right: 20px; }
+        .content-area { flex-grow: 1; }
+        .promo-banner { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+        .catalog { display: flex; flex-wrap: wrap; gap: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; width: 200px; border-radius: 8px; }
+        .card img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Категории</h3>
+            <ul>
+                <li><a href="{% url 'store_app:product_list' %}">Все гаджеты</a></li>
+                {% for c in categories %}
+                    <li><a href="{% url 'store_app:product_list_by_category' c.slug %}">{{ c.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="content-area">
+            
+            <img class="promo-banner" src="{% static 'banner.jpg' %}" alt="Баннер скидок">
+
+            <div class="catalog">
+                {% for product in products %}
+                    <div class="card">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                        {% endif %}
+                        <h4><a href="{% url 'store_app:product_detail' product.slug %}">{{ product.title }}</a></h4>
+                        <p>Бренд: {{ product.brand.name }}</p>
+                        <p>Год: {{ product.release_year }}</p>
+                        <p>Состояние: {{ product.get_condition_display }}</p>
+                        <strong>{{ product.price }} руб.</strong>
+                    </div>
+                {% empty %}
+                    <p>Гаджетов в этой категории пока нет.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
